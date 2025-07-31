@@ -53,6 +53,8 @@ export async function email(message: any, env: any, ctx?: any): Promise<void> {
     // const [body = '(empty body)', ...rest] = splitEllipsis(email.text!, DISC_MAX_LEN, DISC_MAX_LEN - intro.length);
     // const discordMessage = [`${intro}${body}`, ...rest];
     // for (const part of discordMessage) {
+    console.log(`Sending to: ${url}`);
+    // console.log(`Data: ${JSON.stringify(parsedEmail, null, 2)}`)
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -67,7 +69,7 @@ export async function email(message: any, env: any, ctx?: any): Promise<void> {
           // parsedEmail,
         }),
       });
-      if (!response.ok) throw new Error('Failed to post message to webhook.' + (await response.json()));
+      if (!response.ok) throw new Error('Failed to post message to webhook.' + (await response.text()));
 
       // todo: send attachments as separate POST requests with file as body
       // if (email.attachments && email.attachments.length > 0) {
@@ -75,13 +77,14 @@ export async function email(message: any, env: any, ctx?: any): Promise<void> {
       // }
     // }
   } catch (error: any) {
+    console.error(JSON.stringify(error));
     // Report any parsing errors to Discord as well
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content: error.stack }),
-    });
+    // const response = await fetch(url, {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ content: error.stack }),
+    // });
 
-    if (!response.ok) throw new Error('Failed to post error to Discord webhook.' + (await response.json()));
+    // if (!response.ok) throw new Error('Failed to post error to Discord webhook.' + (await response.json()));
   }
 }

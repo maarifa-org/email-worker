@@ -23,7 +23,7 @@
 		"typescript": "^5.4.5",
 		"vitest": "^1.6.0",
 		"vitest-environment-miniflare": "^2.14.2",
-		"wrangler": "^3.83.0"
+		"wrangler": "4"
 	},
 	"volta": {
 		"node": "20.19.0",

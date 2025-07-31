@@ -57,7 +57,10 @@ export async function email(message: any, env: any, ctx?: any): Promise<void> {
     // console.log(`Data: ${JSON.stringify(parsedEmail, null, 2)}`)
     const response = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Authorization': 'Bearer ' + env.AUTH_TOKEN,
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({
         messageId: parsedEmail.messageId,
         to: parsedEmail.to,

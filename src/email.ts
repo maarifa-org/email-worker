@@ -26,7 +26,9 @@ export async function email(message: any, env: any, ctx?: any): Promise<void> {
   try {
     const rawEmail1 = await streamToArrayBuffer(message.raw, message.rawSize);
     const parser = new PostalMime.default();
-    const parsedEmail = await parser.parse(rawEmail1);
+    const parsedEmail = await parser.parse(rawEmail1, {
+      attachmentEncoding: "base64",
+    });
     console.log('Mail subject: ', parsedEmail.subject);
     console.log('Mail message ID', parsedEmail.messageId);
     console.log('HTML version of Email: ', parsedEmail.html);
@@ -65,8 +67,15 @@ export async function email(message: any, env: any, ctx?: any): Promise<void> {
       date: parsedEmail.date,
       text: parsedEmail.text,
       html: parsedEmail.html,
+      attachments: [],
       // parsedEmail,
     }
+    if (parsedEmail.attachments && parsedEmail.attachments.length > 0) {
+      payload.attachments = (parsedEmail.attachments || []).map(attachment => ({
+        filename: attachment.filename || "attachment",
+        mimeType: attachment.mimeType || "application/octet-stream",
+        content: attachment.content, // This is already a Base64 string from postal-mime
+      }));
     console.log(`Data: ${JSON.stringify(payload)}`)
     const response = await fetch(url, {
       method: 'POST',

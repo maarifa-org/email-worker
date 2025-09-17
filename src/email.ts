@@ -85,7 +85,9 @@ export async function email(message: any, env: any, ctx?: any): Promise<void> {
       payload.attachments = (parsedEmail.attachments || []).map(attachment => ({
         filename: attachment.filename || "attachment",
         mimeType: attachment.mimeType || "application/octet-stream",
-        content: arrayBufferToBase64(attachment.content);
+        content: arrayBufferToBase64(attachment.content),
+        size: attachment.content.byteLength,
+        disposition: attachment.disposition || "attachment",
       }));
     }
     console.log(`Data: ${JSON.stringify(payload)}`)

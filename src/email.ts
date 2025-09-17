@@ -76,6 +76,7 @@ export async function email(message: any, env: any, ctx?: any): Promise<void> {
         mimeType: attachment.mimeType || "application/octet-stream",
         content: attachment.content, // This is already a Base64 string from postal-mime
       }));
+    }
     console.log(`Data: ${JSON.stringify(payload)}`)
     const response = await fetch(url, {
       method: 'POST',

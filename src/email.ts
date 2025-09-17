@@ -19,6 +19,15 @@ async function streamToArrayBuffer(stream, streamSize) {
   return result;
 }
 
+const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
+  const binary = new Uint8Array(buffer);
+  let base64String = "";
+  for (let i = 0; i < binary.length; i++) {
+    base64String += String.fromCharCode(binary[i]);
+  }
+  return btoa(base64String);
+};
+
 export async function email(message: any, env: any, ctx?: any): Promise<void> {
   let url = env.DISCORD_WEBHOOK_URL;
   if (!url) throw new Error('Missing DISCORD_WEBHOOK_URL');
@@ -41,6 +50,8 @@ export async function email(message: any, env: any, ctx?: any): Promise<void> {
         console.log('Attachment disposition: ', att.disposition);
         console.log('Attachment mime type: ', att.mimeType);
         console.log('Attachment size: ', att.content.byteLength);
+        const base64Content = arrayBufferToBase64(att.content);
+        console.log('Attachment content (first 100 chars): ', base64Content.slice(0, 100));
       });
     }
     // Parse email
@@ -74,7 +85,7 @@ export async function email(message: any, env: any, ctx?: any): Promise<void> {
       payload.attachments = (parsedEmail.attachments || []).map(attachment => ({
         filename: attachment.filename || "attachment",
         mimeType: attachment.mimeType || "application/octet-stream",
-        content: attachment.content, // This is already a Base64 string from postal-mime
+        content: arrayBufferToBase64(attachment.content);
       }));
     }
     console.log(`Data: ${JSON.stringify(payload)}`)

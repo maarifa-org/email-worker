@@ -57,9 +57,13 @@ export async function email(message: any, env: any, ctx?: any): Promise<void> {
     // Parse email
     const { from, to } = message;
     const subject = message.headers.get('subject') || '(no subject)';
-    if (parsedEmail.text.includes('jon.wynveen') || parsedEmail.to.includes('jon.wynveen')) {
+    
+    // text is undefined for HTML-only emails; to is an array of { name, address } objects
+    /* const toAddresses = (parsedEmail.to || []).map((addr: any) => addr.address || '').join(',');
+    if ((parsedEmail.text || '').includes('jon.wynveen') || toAddresses.includes('jon.wynveen')) {
       url = 'https://webhook.site/cd73996a-8ef2-4267-bf7d-373ace75f11f';
-    }
+    } */
+
     // BugFix: Replace "UTF-8" with "utf-8" to prevent letterparser from throwing an error for some messages.
     // const rawEmail = (await new Response(message.raw).text()).replace(/utf-8/gi, 'utf-8');
     // const email = parseRawEmail(rawEmail);
@@ -113,7 +117,8 @@ export async function email(message: any, env: any, ctx?: any): Promise<void> {
     // }
     // }
   } catch (error: any) {
-    console.error('Uncaught error: ' + JSON.stringify(error));
+    // JSON.stringify(Error) yields "{}", so log the message and stack explicitly
+    console.error('Uncaught error: ' + (error?.stack || error?.message || JSON.stringify(error)));
 
     if (error instanceof Response) {
       const contentType = error.headers.get('content-type');
